@@ -1,0 +1,51 @@
+hosts.ini
+
+[local]
+localhost ansible_connection=local
+
+pb1.yml
+
+- name: My first playbook
+  hosts: local
+  connection: local
+  tasks:
+    - name: Writing my 1st task
+      debug:
+        msg: "This is my first playbook"
+      
+pb2.yml
+
+---
+- name: Variable with one module
+  hosts: local
+  gather_facts: no
+
+  tasks:
+    - name: module command
+      hello_world:
+        name: "Ansible"
+      register: result
+
+    - name: Show message
+      debug:
+        msg: "{{ result.message }}"
+
+hello_world.py
+
+#!/usr/bin/python
+
+from ansible.module_utils.basic import AnsibleModule
+
+def walk():
+
+    module_args = dict(name=dict(type='str', required=True))
+
+    module = AnsibleModule(argument_spec=module_args)
+
+    result = {'changed': False,
+              'message': f"Welcome, {module.params['name']}!"}
+
+    module.exit_json(**result)
+
+if __name__ == "__main__":
+    walk()
