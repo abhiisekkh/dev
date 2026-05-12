@@ -1,0 +1,56 @@
+pipeline{
+    agent any
+    stages{
+        stage('Checkout')
+        {
+            steps{
+                git branch: 'master' , url: 'https://github.com/Keerti-04/program8.git'
+            }
+        }
+        stage('Build')
+        {
+            steps{
+                sh 'mvn clean package'
+            }
+        }
+        stage('Test')
+        {
+            steps{
+                sh 'mvn test'
+            }
+        }
+        stage('Archive Artifact')
+        {
+            steps{
+                archiveArtifacts artifacts: '*/target/.jar',
+                allowEmptyArchive: true
+            }
+        }
+        stage('Deploy')
+        {
+            steps{
+                sh """
+                export ANSIBLE_HOST_KEY_CHECKING=False
+                ansible-playbook -i host.ini p8.yml
+                """
+            }
+        }
+    }
+}
+
+pipelines
+
+
+---
+- name: deploy maven artifact
+  hosts: localhost
+  gather_facts: no
+  become: true
+  become_user: student
+  become_method: su
+
+  tasks:
+    - name: copy jar file
+      copy:
+        src: "/var/lib/jenkins/workspace/shibal8/p8.jar"
+        dest: "/var/lib/jenkins/workspace/shibal8/target/my-app-1.0-SNAPSHOT.jar"
