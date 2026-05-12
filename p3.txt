@@ -1,0 +1,21 @@
+mkdir gradlepro
+
+cd gradlepro
+
+gradle init --type java-application
+
+gradle build
+
+gradle run
+
+task myTask {
+
+    doLast {
+        println "Hello from Gradle Task"
+    }
+
+}
+
+gradle build 
+
+gradle myTask
