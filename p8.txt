@@ -4,7 +4,7 @@ pipeline{
         stage('Checkout')
         {
             steps{
-                git branch: 'master' , url: 'https://github.com/Keerti-04/program8.git'
+                git branch: 'master' , url: 'https://github.com/drishtii04/p8repo.git'
             }
         }
         stage('Build')
@@ -22,7 +22,7 @@ pipeline{
         stage('Archive Artifact')
         {
             steps{
-                archiveArtifacts artifacts: '*/target/.jar',
+                archiveArtifacts artifacts: '**/target/*.jar',
                 allowEmptyArchive: true
             }
         }
@@ -31,26 +31,34 @@ pipeline{
             steps{
                 sh """
                 export ANSIBLE_HOST_KEY_CHECKING=False
-                ansible-playbook -i host.ini p8.yml
+                ansible-playbook -i host.ini p8.yml --extra-vars='ansible_become_pass=2004'
                 """
             }
         }
     }
 }
 
-pipelines
+
+
+
+
+
+
+
+
+
+
+
 
 
 ---
 - name: deploy maven artifact
   hosts: localhost
-  gather_facts: no
-  become: true
-  become_user: student
-  become_method: su
-
   tasks:
-    - name: copy jar file
-      copy:
-        src: "/var/lib/jenkins/workspace/shibal8/p8.jar"
-        dest: "/var/lib/jenkins/workspace/shibal8/target/my-app-1.0-SNAPSHOT.jar"
+   - name: Ansible
+     become: true
+     become_user: drishti
+     become_method: su
+     copy:
+      src: "/var/lib/jenkins/workspace/p8pipe/target/prog8-1.0-SNAPSHOT.jar"
+      dest: "/home/drishti/059/prog8/p8.jar"
